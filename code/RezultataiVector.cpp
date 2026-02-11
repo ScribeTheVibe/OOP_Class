@@ -13,34 +13,38 @@ struct studentas {
     string vardas = "D", pavarde = "K";
     vector<int> pazimys;
     int rezultatas = 0;
+    double vidurkis = 0;
 };
 
 int main()
 {
-    studentas *s = new studentas[3];
-    
+    vector<studentas> s;
+    studentas tempS;
+    int n, p;
+    cin>>n>>p;
+    s.reserve(n);
+
     int temp;
-    for(int i=0; i<2; i++)
+    for(int i=0; i<n; i++)
     {
-        for(int j=0; j<3; j++)
+        for(int j=0; j<p; j++)
         {
             cin>>temp;
-            s[j].pazimys.push_back(temp);
+            tempS.pazimys.push_back(temp);
+            tempS.vidurkis += temp;
         }
-    }
-    
-    for(int i=0; i<2; i++)
-    {
-        for(int j=0; j<3; j++)
-        {
-            s[j].rezultatas += s[j].pazimys[i];
-        }
+        tempS.vidurkis /= p;
+        s.push_back(tempS);
+        tempS.pazimys.clear();
+        tempS.vidurkis = 0;
     }
 
+    std::cout<<"test";
+
     ofstream O ("Rezultatai.txt");
-    for(int i=0; i<3; i++)
+    for(int i=0; i<s.size(); i++)
     {
-        O<<s[i].rezultatas/2.0*0.4+10*0.6<<endl;
+        O<<s[i].vidurkis*0.4+s[i].rezultatas*0.6<<endl;
     }
     return 0;
 }
