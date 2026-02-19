@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <ctime>
+#include <string>
+#include <cctype>
 #include "VardaiPavardes.h"
 
 using std::string;
@@ -19,91 +21,187 @@ struct studentas {
     double mediana = 0;
 };
 
+double skaiciuotiMediana(vector<int>& v)
+{
+    if (v.empty()) return 0;
+
+    sort(v.begin(), v.end());
+    int p = v.size();
+
+    if (p % 2 == 0)
+        return (v[p/2 - 1] + v[p/2]) / 2.0;
+    else
+        return v[p/2];
+}
+
+int saugusInt(string tekstas, int min, int max)
+{
+    int x;
+
+    while (true)
+    {
+        cout << tekstas;
+
+        if (cin >> x && x >= min && x <= max)
+            return x;
+
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "Blogas ivedimas.\n";
+    }
+}
+
 int main()
 {
     vector<studentas> s;
     studentas tempS;
+
     int n, p, m;
-    
-    cout << "Pasirinkite programos eiga" << endl;
-    cout << "1 - ranka ivedami duomenys\n2 - automatiskai sugeneruoti pazymius\n3 - sugeneruoti studentu vardus, pavardes ir pazymius\n4 - baigti darba\n";
-    cin >> m;
-    
+
+    cout << "Pasirinkite programos eiga\n";
+    cout << "1 - ranka ivedami duomenys\n";
+    cout << "2 - automatiskai sugeneruoti pazymius\n";
+    cout << "3 - sugeneruoti studentu vardus, pavardes ir pazymius\n";
+    cout << "4 - baigti darba\n";
+
+    m = saugusInt("Pasirinkimas: ", 1, 4);
+
     if (m == 4) return 0;
-    if (m == 2 || m == 3) srand(time(NULL));
-    
-    cout << "Iveskite studentu kieki" << endl;
-    cin >> n;
-    cout << "Iveskite pazymiu kieki" << endl;
-    cin >> p;
-    
-    s.reserve(n);
 
-    int temp;
-    for (int i = 0; i < n; i++)
+    if (m == 2 || m == 3)
+        srand(time(NULL));
+
+    if (m == 1)
     {
-        if (m == 3)
+        string input;
+
+        while (true)
         {
-            tempS.vardas = vardai[rand() % 15];
-            tempS.pavarde = pavardes[rand() % 15];
-        }
-        else
-        {
-            cout << "Iveskite " << i + 1 << " studento varda" << endl;
-            cin >> tempS.vardas;
-            cout << "Iveskite " << i + 1 << " studento pavarde" << endl;
+            tempS = studentas();
+
+            cout << "\nIveskite studento varda (exit - baigti): ";
+            cin >> input;
+
+            if (input == "exit")
+                break;
+
+            tempS.vardas = input;
+
+            cout << "Iveskite pavarde: ";
             cin >> tempS.pavarde;
-        }
 
-        for (int j = 0; j < p; j++)
-        {
-            if (m == 2 || m == 3)
+            cout << "Iveskite pazymius (exit - baigti):\n";
+
+            while (true)
             {
-                temp = rand() % 11;
+                cin >> input;
+
+                if (input == "exit")
+                    break;
+
+                bool valid = true;
+                for (char c : input)
+                    if (!isdigit(c)) valid = false;
+
+                if (!valid)
+                {
+                    cout << "Blogas ivedimas.\n";
+                    continue;
+                }
+
+                int paz = stoi(input);
+
+                if (paz < 0 || paz > 10)
+                {
+                    cout << "Pazymys 0–10.\n";
+                    continue;
+                }
+
+                tempS.pazimys.push_back(paz);
+                tempS.vidurkis += paz;
             }
-            else 
+
+            if (tempS.pazimys.empty())
             {
-                cout << "Iveskite pazymi" << endl;
-                cin >> temp;
+                cout << "Studentas neturi pazymiu — praleistas.\n";
+                continue;
             }
-            tempS.pazimys.push_back(temp);
-            tempS.vidurkis += temp;
-        }
 
-        if (m == 2 || m == 3)
-        {
-            tempS.rezultatas = rand() % 11;
-        }
-        else 
-        {
-            cout << "Iveskite egzamino rezultata" << endl;
-            cin >> tempS.rezultatas;
-        }
+            tempS.vidurkis /= tempS.pazimys.size();
 
-        sort(tempS.pazimys.begin(), tempS.pazimys.end());
+            // ---------- Egzaminas ----------
 
-        if (p % 2 == 0)
-        {
-            tempS.mediana = (tempS.pazimys[p / 2 - 1] + tempS.pazimys[p / 2]) / 2.0;
-        }
-        else
-        {
-            tempS.mediana = tempS.pazimys[p / 2];
-        }
+            tempS.rezultatas =
+                saugusInt("Egzamino rezultatas: ", 0, 10);
 
-        tempS.vidurkis /= p;
-        s.push_back(tempS);
-        tempS.pazimys.clear();
-        tempS.vidurkis = 0;
+            tempS.mediana =
+                skaiciuotiMediana(tempS.pazimys);
+
+            s.push_back(tempS);
+        }
     }
-    
-    for (int i = 0; i < s.size(); i++)
+
+    else
     {
-        cout << endl;
-        cout << s[i].vardas << " " << s[i].pavarde << " galutinis rezultatas:" << endl;
-        cout << s[i].vidurkis * 0.4 + s[i].rezultatas * 0.6 << endl;
-        cout << s[i].vardas << " " << s[i].pavarde << " mediana:" << endl;
-        cout << s[i].mediana << endl << endl;
+        n = saugusInt("Iveskite studentu kieki: ", 1, 1000000);
+        p = saugusInt("Iveskite pazymiu kieki: ", 1, 1000);
+
+        s.reserve(n);
+
+        for (int i = 0; i < n; i++)
+        {
+            tempS = studentas();
+
+            if (m == 3)
+            {
+                tempS.vardas = vardai[rand() % 15];
+                tempS.pavarde = pavardes[rand() % 15];
+            }
+            else
+            {
+                cout << "Vardas: ";
+                cin >> tempS.vardas;
+                cout << "Pavarde: ";
+                cin >> tempS.pavarde;
+            }
+
+            for (int j = 0; j < p; j++)
+            {
+                int paz = rand() % 11;
+                tempS.pazimys.push_back(paz);
+                tempS.vidurkis += paz;
+            }
+
+            tempS.vidurkis /= p;
+            tempS.rezultatas = rand() % 11;
+            tempS.mediana = skaiciuotiMediana(tempS.pazimys);
+
+            s.push_back(tempS);
+        }
     }
+
+    cout << "\n===== REZULTATAI =====\n";
+
+    for (const auto& st : s)
+    {
+        double galVid =
+            st.vidurkis * 0.4 +
+            st.rezultatas * 0.6;
+
+        double galMed =
+            st.mediana * 0.4 +
+            st.rezultatas * 0.6;
+
+        cout << "\n"
+             << st.vardas << " "
+             << st.pavarde << endl;
+
+        cout << "Galutinis (vid.): "
+             << galVid << endl;
+
+        cout << "Galutinis (med.): "
+             << galMed << endl;
+    }
+
     return 0;
 }
