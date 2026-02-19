@@ -113,7 +113,7 @@ int main()
 
                 if (paz < 0 || paz > 10)
                 {
-                    cout << "Pazymys 0–10.\n";
+                    cout << "Pazymys 0-10.\n";
                     continue;
                 }
 
@@ -128,8 +128,6 @@ int main()
             }
 
             tempS.vidurkis /= tempS.pazimys.size();
-
-            // ---------- Egzaminas ----------
 
             tempS.rezultatas =
                 saugusInt("Egzamino rezultatas: ", 0, 10);
