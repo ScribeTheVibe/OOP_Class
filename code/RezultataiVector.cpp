@@ -26,6 +26,8 @@ struct studentas
     int rezultatas = 0;
     double vidurkis = 0;
     double mediana = 0;
+    double galVid;
+    double galMed;
 };
 
 double skaiciuotiMediana(vector<int> &v)
@@ -56,6 +58,35 @@ int saugusInt(string tekstas, int min, int max)
         cin.ignore(10000, '\n');
         cout << "Blogas ivedimas.\n";
     }
+}
+
+void sortS(vector<studentas> &s, int sortType)
+{
+    sort(s.begin(), s.end(),
+         [sortType](const studentas &a, const studentas &b)
+         {
+             switch (sortType)
+             {
+             case 2:
+                 return a.vardas > b.vardas;
+             case 3:
+                 return a.pavarde > b.pavarde;
+             case 4:
+                 return a.galVid > b.galVid;
+             case 5:
+                 return a.galMed > b.galMed;
+             case 6:
+                 return a.vardas < b.vardas;
+             case 7:
+                 return a.pavarde < b.pavarde;
+             case 8:
+                 return a.galVid < b.galVid;
+             case 9:
+                 return a.galMed < b.galMed;
+             default:
+                 return false;
+             }
+         });
 }
 
 int main()
@@ -143,6 +174,10 @@ int main()
 
             tempS.mediana = skaiciuotiMediana(tempS.pazimys);
 
+            tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+
+            tempS.galMed = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+
             s.push_back(tempS);
         }
     }
@@ -181,6 +216,8 @@ int main()
             tempS.vidurkis /= p;
             tempS.rezultatas = rand() % 11;
             tempS.mediana = skaiciuotiMediana(tempS.pazimys);
+            tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+            tempS.galMed = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
 
             s.push_back(tempS);
         }
@@ -216,6 +253,8 @@ int main()
                 }
                 tempS.vidurkis /= tempS.pazimys.size();
                 tempS.mediana = skaiciuotiMediana(tempS.pazimys);
+                tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+                tempS.galMed = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
                 s.push_back(tempS);
                 firstTime = false;
             }
@@ -230,13 +269,22 @@ int main()
     }
 
     cout << "\nPasirinkite isvedima\n"
-         << "1 - i terminala\n2 - i faila\n";
+         << "1 - i terminala\n2 - i faila\n\n";
     cout << "Pasirinkimas: ";
     m = saugusInt("Pasirinkimas: ", 1, 2);
+
+    int sor;
+    cout << "\nPasirinkite rusiavima\n"
+         << "1 - nerusiuoti\n2 - pagal varda zemyn\n3 - pagal pavarde zemyn\n4 - pagal Galutinis (vid.) zemyn\n5 - pagal Galutinis (med).) zemyn\n"
+         << "6 - pagal varda aukstyn\n7 - pagal pavarde aukstyn\n8 - pagal Galutinis (vid.) aukstyn\n9 - pagal Galutinis (med).) aukstyn\n\n";
+    cout << "Pasirinkimas: ";
+    sor = saugusInt("Pasirinkimas: ", 1, 9);
     cout << endl;
 
     if (m == 1)
     {
+        if (sor != 1)
+            sortS(s, sor);
         cout << "===== REZULTATAI =====\n";
         cout << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
@@ -262,28 +310,22 @@ int main()
     }
     else
     {
+        if (sor != 1)
+            sortS(s, sor);
         ofstream out("isvedimas.txt");
         out << "===== REZULTATAI =====\n";
         out << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
         {
-            double galVid =
-                st.vidurkis * 0.4 +
-                st.rezultatas * 0.6;
-
-            double galMed =
-                st.mediana * 0.4 +
-                st.rezultatas * 0.6;
-
             out << setw(12) << left;
 
             out << st.vardas << " " << setw(12) << left << st.pavarde << " ";
 
             out << setw(17) << left << std::setprecision(3);
 
-            out << galVid << " ";
+            out << st.galVid << " ";
 
-            out << galMed << endl;
+            out << st.galMed << endl;
         }
     }
     return 0;
