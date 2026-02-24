@@ -93,8 +93,7 @@ int main()
 {
     vector<studentas> s;
     studentas tempS;
-
-    int n, p, m;
+    int m;
 
     cout << "Pasirinkite programos eiga\n";
     cout << "1 - ranka ivedami duomenys\n";
@@ -107,9 +106,6 @@ int main()
 
     if (m == 5)
         return 0;
-
-    if (m == 3 || m == 4)
-        srand(time(NULL));
 
     if (m == 1)
     {
@@ -184,6 +180,8 @@ int main()
 
     else if (m == 3 || m == 4)
     {
+        srand(time(NULL));
+        int n, p;
         n = saugusInt("Iveskite studentu kieki: ", 1, 1000000);
         p = saugusInt("Iveskite pazymiu kieki: ", 1, 1000);
 
@@ -289,23 +287,17 @@ int main()
         cout << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
         {
-            double galVid =
-                st.vidurkis * 0.4 +
-                st.rezultatas * 0.6;
+            cout << setw(20) << left;
 
-            double galMed =
-                st.mediana * 0.4 +
-                st.rezultatas * 0.6;
-
-            cout << setw(12) << left;
-
-            cout << st.vardas << " " << setw(12) << left << st.pavarde << " ";
+            cout << st.vardas << " " << setw(20) << left << st.pavarde << " ";
 
             cout << setw(17) << left << std::setprecision(3);
 
-            cout << galVid << " ";
+            cout << st.galVid << " ";
 
-            cout << galMed << endl;
+            cout << setw(17) << left << std::setprecision(3);
+
+            cout << st.galMed << endl;
         }
     }
     else
@@ -314,16 +306,18 @@ int main()
             sortS(s, sor);
         ofstream out("isvedimas.txt");
         out << "===== REZULTATAI =====\n";
-        out << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
+        out << "\nVardas               Pavarde              Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
         {
-            out << setw(12) << left;
+            out << setw(20) << left;
 
-            out << st.vardas << " " << setw(12) << left << st.pavarde << " ";
+            out << st.vardas << " " << setw(20) << left << st.pavarde << " ";
 
             out << setw(17) << left << std::setprecision(3);
 
             out << st.galVid << " ";
+
+            out << setw(17) << left << std::setprecision(3);
 
             out << st.galMed << endl;
         }
