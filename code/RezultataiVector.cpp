@@ -1,93 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <ctime>
-#include <string>
-#include <cctype>
-#include "VardaiPavardes.h"
-#include <fstream>
-#include <iomanip>
-
-using std::cin;
-using std::cout;
-using std::endl;
-using std::ifstream;
-using std::left;
-using std::ofstream;
-using std::setw;
-using std::sort;
-using std::string;
-using std::vector;
-
-struct studentas
-{
-    string vardas, pavarde;
-    vector<int> pazimys;
-    int rezultatas = 0;
-    double vidurkis = 0;
-    double mediana = 0;
-    double galVid;
-    double galMed;
-};
-
-double skaiciuotiMediana(vector<int> &v)
-{
-    if (v.empty())
-        return 0;
-
-    sort(v.begin(), v.end());
-    int p = v.size();
-
-    if (p % 2 == 0)
-        return (v[p / 2 - 1] + v[p / 2]) / 2.0;
-
-    else
-        return v[p / 2];
-}
-
-int saugusInt(string tekstas, int min, int max)
-{
-    int x;
-
-    while (true)
-    {
-        cout << tekstas;
-        if (cin >> x && x >= min && x <= max)
-            return x;
-        cin.clear();
-        cin.ignore(10000, '\n');
-        cout << "Blogas ivedimas.\n";
-    }
-}
-
-void sortS(vector<studentas> &s, int sortType)
-{
-    sort(s.begin(), s.end(),
-         [sortType](const studentas &a, const studentas &b)
-         {
-             switch (sortType)
-             {
-             case 2:
-                 return a.vardas > b.vardas;
-             case 3:
-                 return a.pavarde > b.pavarde;
-             case 4:
-                 return a.galVid > b.galVid;
-             case 5:
-                 return a.galMed > b.galMed;
-             case 6:
-                 return a.vardas < b.vardas;
-             case 7:
-                 return a.pavarde < b.pavarde;
-             case 8:
-                 return a.galVid < b.galVid;
-             case 9:
-                 return a.galMed < b.galMed;
-             default:
-                 return false;
-             }
-         });
-}
+#include "Headers.h"
 
 int main()
 {
@@ -103,6 +14,7 @@ int main()
     cout << "5 - baigti darba\n\n";
 
     m = saugusInt("Pasirinkimas: ", 1, 5);
+    cout<<endl;
 
     if (m == 5)
         return 0;
@@ -268,23 +180,20 @@ int main()
 
     cout << "\nPasirinkite isvedima\n"
          << "1 - i terminala\n2 - i faila\n\n";
-    cout << "Pasirinkimas: ";
     m = saugusInt("Pasirinkimas: ", 1, 2);
 
     int sor;
     cout << "\nPasirinkite rusiavima\n"
          << "1 - nerusiuoti\n2 - pagal varda zemyn\n3 - pagal pavarde zemyn\n4 - pagal Galutinis (vid.) zemyn\n5 - pagal Galutinis (med).) zemyn\n"
          << "6 - pagal varda aukstyn\n7 - pagal pavarde aukstyn\n8 - pagal Galutinis (vid.) aukstyn\n9 - pagal Galutinis (med).) aukstyn\n\n";
-    cout << "Pasirinkimas: ";
     sor = saugusInt("Pasirinkimas: ", 1, 9);
-    cout << endl;
 
     if (m == 1)
     {
         if (sor != 1)
             sortS(s, sor);
-        cout << "===== REZULTATAI =====\n";
-        cout << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
+        cout << "\n===== REZULTATAI =====\n";
+        cout << "\nVardas               Pavarde              Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
         {
             cout << setw(20) << left;
@@ -320,6 +229,17 @@ int main()
             out << setw(17) << left << std::setprecision(3);
 
             out << st.galMed << endl;
+        }
+    }
+
+    cout<<"\n\nIveskite 'close' jog uzdaryti programa\n";
+    string close;
+    while(true)
+    {
+        cin>>close;
+        if(close == "close")
+        {
+            break;
         }
     }
     return 0;
