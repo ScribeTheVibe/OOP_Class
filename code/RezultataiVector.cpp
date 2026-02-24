@@ -201,20 +201,22 @@ int main()
             tempS = studentas();
             if (file >> tempS.vardas >> tempS.pavarde)
             {
-                for (int i = 0; i < 15; i++)
+                while(true)
                 {
                     if(file >> temp)
                     {
                         tempS.pazimys.push_back(temp);
                         tempS.vidurkis += temp;
+                        tempS.rezultatas = temp;
                     }
                     else
                     {
-                        cout<<"failas netinkamu formatu";
-                        return 0;
+                        file.clear();
+                        tempS.pazimys.pop_back();
+                        tempS.vidurkis -= tempS.rezultatas;
+                        break;
                     }
                 }
-                file >> tempS.rezultatas;
                 tempS.vidurkis /= tempS.pazimys.size();
                 tempS.mediana = skaiciuotiMediana(tempS.pazimys);
                 s.push_back(tempS);
