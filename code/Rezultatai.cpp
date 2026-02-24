@@ -29,10 +29,8 @@ double skaiciuotiMediana(int* arr, int kiekis)
 
     sort(arr, arr + kiekis);
 
-    if (kiekis % 2 == 0)
-        return (arr[kiekis / 2 - 1] + arr[kiekis / 2]) / 2.0;
-    else
-        return arr[kiekis / 2];
+    if (kiekis % 2 == 0) return (arr[kiekis / 2 - 1] + arr[kiekis / 2]) / 2.0;
+    else return arr[kiekis / 2];
 }
 
 int saugusInt(string tekstas, int min, int max)
@@ -53,10 +51,7 @@ int saugusInt(string tekstas, int min, int max)
 
 int main()
 {
-    srand(time(NULL));
-
-    int n = 0;
-    int m;
+    int n = 0, m;
 
     cout << "Pasirinkite programos eiga\n";
     cout << "1 - ranka ivedami duomenys\n";
@@ -79,8 +74,7 @@ int main()
             cout << "\nIveskite studento varda (arba 'exit'): ";
             cin >> temp;
 
-            if (temp == "exit")
-                break;
+            if (temp == "exit") break;
 
             studentas* naujas = new studentas[n + 1];
 
@@ -99,19 +93,17 @@ int main()
             int kiekis = 0;
             s[n].pazimys = new int[capacity];
 
-            string input;
-
             cout << "Iveskite pazymius (exit - baigti):\n";
 
             while (true)
             {
-                cin >> input;
+                cin >> temp;
 
-                if (input == "exit")
+                if (temp == "exit")
                     break;
 
                 bool valid = true;
-                for (char c : input)
+                for (char c : temp)
                     if (!isdigit(c)) valid = false;
 
                 if (!valid)
@@ -120,7 +112,7 @@ int main()
                     continue;
                 }
 
-                int pazymys = stoi(input);
+                int pazymys = stoi(temp);
 
                 if (pazymys < 0 || pazymys > 10)
                 {
@@ -154,21 +146,17 @@ int main()
             s[n].pazymiuKiekis = kiekis;
             s[n].vidurkis /= kiekis;
 
-            s[n].rezultatas =
-                saugusInt("Egzamino pazymys (0-10): ", 0, 10);
+            s[n].rezultatas = saugusInt("Egzamino pazymys (0-10): ", 0, 10);
 
-            s[n].mediana =
-                skaiciuotiMediana(
-                    s[n].pazimys,
-                    s[n].pazymiuKiekis
-                );
-
+            s[n].mediana =skaiciuotiMediana(s[n].pazimys, s[n].pazymiuKiekis);
+            
             n++;
         }
     }
 
     else
     {
+        srand(time(NULL));
         n = saugusInt("Studentu kiekis: ", 1, 1000000);
         int p = saugusInt("Pazymiu kiekis: ", 1, 1000);
 

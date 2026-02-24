@@ -12,12 +12,12 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::ifstream;
+using std::left;
 using std::ofstream;
+using std::setw;
 using std::sort;
 using std::string;
 using std::vector;
-using std::setw;
-using std::left;
 
 struct studentas
 {
@@ -38,6 +38,7 @@ double skaiciuotiMediana(vector<int> &v)
 
     if (p % 2 == 0)
         return (v[p / 2 - 1] + v[p / 2]) / 2.0;
+
     else
         return v[p / 2];
 }
@@ -49,10 +50,8 @@ int saugusInt(string tekstas, int min, int max)
     while (true)
     {
         cout << tekstas;
-
         if (cin >> x && x >= min && x <= max)
             return x;
-
         cin.clear();
         cin.ignore(10000, '\n');
         cout << "Blogas ivedimas.\n";
@@ -140,11 +139,9 @@ int main()
 
             tempS.vidurkis /= tempS.pazimys.size();
 
-            tempS.rezultatas =
-                saugusInt("Egzamino rezultatas: ", 0, 10);
+            tempS.rezultatas = saugusInt("Egzamino rezultatas: ", 0, 10);
 
-            tempS.mediana =
-                skaiciuotiMediana(tempS.pazimys);
+            tempS.mediana = skaiciuotiMediana(tempS.pazimys);
 
             s.push_back(tempS);
         }
@@ -201,9 +198,9 @@ int main()
             tempS = studentas();
             if (file >> tempS.vardas >> tempS.pavarde)
             {
-                while(true)
+                while (true)
                 {
-                    if(file >> temp)
+                    if (file >> temp)
                     {
                         tempS.pazimys.push_back(temp);
                         tempS.vidurkis += temp;
@@ -222,21 +219,23 @@ int main()
                 s.push_back(tempS);
                 firstTime = false;
             }
-            else if(firstTime)
+            else if (firstTime)
             {
-                cout<<"failas tuscias arba netinkamas formatas";
+                cout << "failas tuscias arba netinkamas formatas";
                 return 0;
-            } 
-            else break;
+            }
+            else
+                break;
         }
     }
 
-    cout<<"\nPasirinkite isvedima\n"<<"1 - i terminala\n2 - i faila\n";
-    cout<<"Pasirinkimas: ";
+    cout << "\nPasirinkite isvedima\n"
+         << "1 - i terminala\n2 - i faila\n";
+    cout << "Pasirinkimas: ";
     m = saugusInt("Pasirinkimas: ", 1, 2);
-    cout<<endl;
+    cout << endl;
 
-    if(m==1)
+    if (m == 1)
     {
         cout << "===== REZULTATAI =====\n";
         cout << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
@@ -263,7 +262,7 @@ int main()
     }
     else
     {
-        ofstream out ("isvedimas.txt");
+        ofstream out("isvedimas.txt");
         out << "===== REZULTATAI =====\n";
         out << "\nVardas       Pavarde      Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
