@@ -4,7 +4,8 @@ int main()
 {
     vector<studentas> s;
     studentas tempS;
-    int m;
+    int m, n, p;
+    srand(time(NULL));
 
     cout << "Pasirinkite programos eiga\n";
     cout << "1 - ranka ivedami duomenys\n";
@@ -14,12 +15,12 @@ int main()
     cout << "5 - baigti darba\n\n";
 
     m = saugusInt("Pasirinkimas: ", 1, 5);
-    cout<<endl;
+    cout << endl;
 
     if (m == 5)
         return 0;
 
-    if (m == 1)
+    if (m == 1 || m == 3)
     {
         string input;
 
@@ -38,36 +39,49 @@ int main()
             cout << "Iveskite pavarde: ";
             cin >> tempS.pavarde;
 
-            cout << "Iveskite pazymius (exit - baigti):\n";
-
-            while (true)
+            if (m == 1)
             {
-                cin >> input;
+                cout << "Iveskite pazymius (exit - baigti):\n";
 
-                if (input == "exit")
-                    break;
-
-                bool valid = true;
-                for (char c : input)
-                    if (!isdigit(c))
-                        valid = false;
-
-                if (!valid)
+                while (true)
                 {
-                    cout << "Blogas ivedimas.\n";
-                    continue;
+                    cin >> input;
+
+                    if (input == "exit")
+                        break;
+
+                    bool valid = true;
+                    for (char c : input)
+                        if (!isdigit(c))
+                            valid = false;
+
+                    if (!valid)
+                    {
+                        cout << "Blogas ivedimas.\n";
+                        continue;
+                    }
+
+                    int paz = stoi(input);
+
+                    if (paz < 0 || paz > 10)
+                    {
+                        cout << "Pazymys 0-10.\n";
+                        continue;
+                    }
+
+                    tempS.pazimys.push_back(paz);
+                    tempS.vidurkis += paz;
                 }
-
-                int paz = stoi(input);
-
-                if (paz < 0 || paz > 10)
+            }
+            else
+            {
+                p = saugusInt("Iveskite pazymiu kieki: ", 1, 1000);
+                for (int j = 0; j < p; j++)
                 {
-                    cout << "Pazymys 0-10.\n";
-                    continue;
+                    int paz = rand() % 11;
+                    tempS.pazimys.push_back(paz);
+                    tempS.vidurkis += paz;
                 }
-
-                tempS.pazimys.push_back(paz);
-                tempS.vidurkis += paz;
             }
 
             if (tempS.pazimys.empty())
@@ -78,7 +92,14 @@ int main()
 
             tempS.vidurkis /= tempS.pazimys.size();
 
-            tempS.rezultatas = saugusInt("Egzamino rezultatas: ", 0, 10);
+            if (m == 1)
+            {
+                tempS.rezultatas = saugusInt("Egzamino rezultatas: ", 0, 10);
+            }
+            else
+            {
+                tempS.rezultatas = rand() % 11;
+            }
 
             tempS.mediana = skaiciuotiMediana(tempS.pazimys);
 
@@ -90,10 +111,8 @@ int main()
         }
     }
 
-    else if (m == 3 || m == 4)
+    else if (m == 4)
     {
-        srand(time(NULL));
-        int n, p;
         n = saugusInt("Iveskite studentu kieki: ", 1, 1000000);
         p = saugusInt("Iveskite pazymiu kieki: ", 1, 1000);
 
@@ -102,19 +121,8 @@ int main()
         for (int i = 0; i < n; i++)
         {
             tempS = studentas();
-
-            if (m == 4)
-            {
-                tempS.vardas = vardai[rand() % 15];
-                tempS.pavarde = pavardes[rand() % 15];
-            }
-            else
-            {
-                cout << "Vardas: ";
-                cin >> tempS.vardas;
-                cout << "Pavarde: ";
-                cin >> tempS.pavarde;
-            }
+            tempS.vardas = vardai[rand() % 15];
+            tempS.pavarde = pavardes[rand() % 15];
 
             for (int j = 0; j < p; j++)
             {
@@ -232,12 +240,12 @@ int main()
         }
     }
 
-    cout<<"\n\nIveskite 'close' jog uzdaryti programa\n";
+    cout << "\n\nIveskite 'close' jog uzdaryti programa\n";
     string close;
-    while(true)
+    while (true)
     {
-        cin>>close;
-        if(close == "close")
+        cin >> close;
+        if (close == "close")
         {
             break;
         }
