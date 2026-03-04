@@ -143,7 +143,13 @@ int main()
 
     else
     {
-        ifstream file("kursiokai.txt");
+        try
+        {
+            ifstream file("kursiokai.txt");
+
+            if (!file.is_open())
+                throw std::runtime_error("Nepavyko atidaryti failo.");
+
         string skip;
         bool firstTime = true;
         int temp;
@@ -186,6 +192,12 @@ int main()
                 break;
         }
         file.close();
+        }
+        catch (const std::exception& e)
+        {
+            cout << "Klaida: " << e.what() << endl;
+            return 1;
+        }
     }
 
     cout << "\nPasirinkite isvedima\n"
