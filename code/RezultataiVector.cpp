@@ -146,8 +146,9 @@ int main()
         ifstream file("kursiokai.txt");
         string skip;
         bool firstTime = true;
-        getline(file, skip);
         int temp;
+
+        getline(file, skip);
         while (true)
         {
             tempS = studentas();
@@ -184,6 +185,7 @@ int main()
             else
                 break;
         }
+        file.close();
     }
 
     cout << "\nPasirinkite isvedima\n"
@@ -238,6 +240,7 @@ int main()
 
             out << st.galMed << endl;
         }
+        out.close();
     }
 
     cout << "\n\nIveskite 'close' jog uzdaryti programa\n";
