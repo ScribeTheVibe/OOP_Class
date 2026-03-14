@@ -8,12 +8,14 @@
 #include <cctype>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 #include <string>
 
 using std::cin;
 using std::cout;
 using std::endl;
 using std::ifstream;
+using std::istringstream;
 using std::left;
 using std::ofstream;
 using std::setw;
@@ -28,8 +30,8 @@ struct studentas
     int rezultatas = 0;
     double vidurkis = 0;
     double mediana = 0;
-    double galVid;
-    double galMed;
+    double galVid = 0;
+    double galMed = 0;
 };
 
 double skaiciuotiMediana(vector<int> &v);

@@ -102,10 +102,8 @@ int main()
             }
 
             tempS.mediana = skaiciuotiMediana(tempS.pazimys);
-
             tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
-
-            tempS.galMed = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+            tempS.galMed = tempS.mediana * 0.4 + tempS.rezultatas * 0.6;
 
             s.push_back(tempS);
         }
@@ -135,7 +133,7 @@ int main()
             tempS.rezultatas = rand() % 11;
             tempS.mediana = skaiciuotiMediana(tempS.pazimys);
             tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
-            tempS.galMed = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+            tempS.galMed = tempS.mediana * 0.4 + tempS.rezultatas * 0.6;
 
             s.push_back(tempS);
         }
@@ -146,54 +144,58 @@ int main()
         try
         {
             ifstream file("kursiokai.txt");
-
             if (!file.is_open())
                 throw std::runtime_error("Nepavyko atidaryti failo.");
 
-        string skip;
-        bool firstTime = true;
-        int temp;
+            string line;
+            getline(file, line);
 
-        getline(file, skip);
-        while (true)
-        {
-            tempS = studentas();
-            if (file >> tempS.vardas >> tempS.pavarde)
+            bool anyRead = false;
+
+            while (getline(file, line))
             {
-                while (true)
+                if (line.empty())
+                    continue;
+
+                istringstream iss(line);
+                tempS = studentas();
+
+                if (!(iss >> tempS.vardas >> tempS.pavarde))
+                    continue;
+
+                int temp;
+                while (iss >> temp)
                 {
-                    if (file >> temp)
-                    {
-                        tempS.pazimys.push_back(temp);
-                        tempS.vidurkis += temp;
-                        tempS.rezultatas = temp;
-                    }
-                    else
-                    {
-                        file.clear();
-                        tempS.pazimys.pop_back();
-                        tempS.vidurkis -= tempS.rezultatas;
-                        break;
-                    }
+                    tempS.pazimys.push_back(temp);
+                    tempS.vidurkis += temp;
                 }
+
+                if (tempS.pazimys.empty())
+                    continue;
+
+                tempS.rezultatas = tempS.pazimys.back();
+                tempS.vidurkis -= tempS.rezultatas;
+                tempS.pazimys.pop_back();
+
+                if (tempS.pazimys.empty())
+                    continue;
+
                 tempS.vidurkis /= tempS.pazimys.size();
                 tempS.mediana = skaiciuotiMediana(tempS.pazimys);
                 tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
-                tempS.galMed = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
+                tempS.galMed = tempS.mediana * 0.4 + tempS.rezultatas * 0.6;
+
                 s.push_back(tempS);
-                firstTime = false;
+                anyRead = true;
             }
-            else if (firstTime)
+
+            if (!anyRead)
             {
-                cout << "failas tuscias arba netinkamas formatas";
+                cout << "Failas tuscias arba netinkamas formatas.\n";
                 return 0;
             }
-            else
-                break;
         }
-        file.close();
-        }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             cout << "Klaida: " << e.what() << endl;
             return 1;
@@ -218,17 +220,10 @@ int main()
         cout << "\nVardas               Pavarde              Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
         {
-            cout << setw(20) << left;
-
-            cout << st.vardas << " " << setw(20) << left << st.pavarde << " ";
-
-            cout << setw(17) << left << std::setprecision(3);
-
-            cout << st.galVid << " ";
-
-            cout << setw(17) << left << std::setprecision(3);
-
-            cout << st.galMed << endl;
+            cout << setw(20) << left << st.vardas << " "
+                 << setw(20) << left << st.pavarde << " "
+                 << setw(17) << left << std::setprecision(3) << st.galVid << " "
+                 << setw(17) << left << std::setprecision(3) << st.galMed << "\n";
         }
     }
     else
@@ -240,19 +235,11 @@ int main()
         out << "\nVardas               Pavarde              Galutinis (vid.)  Galutinis (med.)  \n\n";
         for (const auto &st : s)
         {
-            out << setw(20) << left;
-
-            out << st.vardas << " " << setw(20) << left << st.pavarde << " ";
-
-            out << setw(17) << left << std::setprecision(3);
-
-            out << st.galVid << " ";
-
-            out << setw(17) << left << std::setprecision(3);
-
-            out << st.galMed << endl;
+            out << setw(20) << left << st.vardas << " "
+                << setw(20) << left << st.pavarde << " "
+                << setw(17) << left << std::setprecision(3) << st.galVid << " "
+                << setw(17) << left << std::setprecision(3) << st.galMed << "\n";
         }
-        out.close();
     }
 
     cout << "\n\nIveskite 'close' jog uzdaryti programa\n";
@@ -261,9 +248,7 @@ int main()
     {
         cin >> close;
         if (close == "close")
-        {
             break;
-        }
     }
     return 0;
 }
