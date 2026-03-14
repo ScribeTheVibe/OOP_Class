@@ -12,13 +12,47 @@ int main()
     cout << "2 - is failo ivedami duomenys\n";
     cout << "3 - automatiskai sugeneruoti pazymius\n";
     cout << "4 - sugeneruoti studentu vardus, pavardes ir pazymius\n";
-    cout << "5 - baigti darba\n\n";
+    cout << "5 - baigti darba\n";
+    cout << "6 - sugeneruoti 5 duomenu failus\n";
+    cout << "7 - atlikti greicio testus\n\n";
 
-    m = saugusInt("Pasirinkimas: ", 1, 5);
+    m = saugusInt("Pasirinkimas: ", 1, 7);
     cout << endl;
 
     if (m == 5)
         return 0;
+
+    if (m == 6)
+    {
+        generuotiVisusFailus();
+        return 0;
+    }
+
+    if (m == 7)
+    {
+        cout << "\nPasirinkite tyrima:\n"
+             << "1 - Tyrimas 1 (failu kurimas)\n"
+             << "2 - Tyrimas 2 (duomenu apdorojimas)\n\n";
+        int t = saugusInt("Pasirinkimas: ", 1, 2);
+
+        if (t == 1)
+        {
+            testas1_failuKurimas();
+        }
+        else
+        {
+            cout << "\n===== TYRIMAS 2: Duomenu apdorojimas =====\n";
+            string files[] = {
+                "studentai_1000.txt",
+                "studentai_10000.txt",
+                "studentai_100000.txt",
+                "studentai_1000000.txt",
+                "studentai_10000000.txt"};
+            for (const auto &f : files)
+                testas2_duomenuApdorojimas(f);
+        }
+        return 0;
+    }
 
     if (m == 1 || m == 3)
     {
@@ -62,7 +96,6 @@ int main()
                     }
 
                     int paz = stoi(input);
-
                     if (paz < 0 || paz > 10)
                     {
                         cout << "Pazymys 0-10.\n";
@@ -93,13 +126,9 @@ int main()
             tempS.vidurkis /= tempS.pazimys.size();
 
             if (m == 1)
-            {
                 tempS.rezultatas = saugusInt("Egzamino rezultatas: ", 0, 10);
-            }
             else
-            {
                 tempS.rezultatas = rand() % 11;
-            }
 
             tempS.mediana = skaiciuotiMediana(tempS.pazimys);
             tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
@@ -139,57 +168,15 @@ int main()
         }
     }
 
-    else
+    else // m == 2
     {
         try
         {
-            ifstream file("kursiokai.txt");
-            if (!file.is_open())
-                throw std::runtime_error("Nepavyko atidaryti failo.");
+            string filename;
+            cout << "Iveskite failo pavadinima: ";
+            cin >> filename;
 
-            string line;
-            getline(file, line);
-
-            bool anyRead = false;
-
-            while (getline(file, line))
-            {
-                if (line.empty())
-                    continue;
-
-                istringstream iss(line);
-                tempS = studentas();
-
-                if (!(iss >> tempS.vardas >> tempS.pavarde))
-                    continue;
-
-                int temp;
-                while (iss >> temp)
-                {
-                    tempS.pazimys.push_back(temp);
-                    tempS.vidurkis += temp;
-                }
-
-                if (tempS.pazimys.empty())
-                    continue;
-
-                tempS.rezultatas = tempS.pazimys.back();
-                tempS.vidurkis -= tempS.rezultatas;
-                tempS.pazimys.pop_back();
-
-                if (tempS.pazimys.empty())
-                    continue;
-
-                tempS.vidurkis /= tempS.pazimys.size();
-                tempS.mediana = skaiciuotiMediana(tempS.pazimys);
-                tempS.galVid = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
-                tempS.galMed = tempS.mediana * 0.4 + tempS.rezultatas * 0.6;
-
-                s.push_back(tempS);
-                anyRead = true;
-            }
-
-            if (!anyRead)
+            if (!nuskaitytiIsFailo(filename, s))
             {
                 cout << "Failas tuscias arba netinkamas formatas.\n";
                 return 0;
@@ -202,44 +189,58 @@ int main()
         }
     }
 
+    // ── output ───────────────────────────────────────────────────────────────
+
+    // Split into two groups
+    vector<studentas> gerai, blogai;
+    isskirtiStudentus(s, gerai, blogai);
+
     cout << "\nPasirinkite isvedima\n"
          << "1 - i terminala\n2 - i faila\n\n";
     m = saugusInt("Pasirinkimas: ", 1, 2);
 
     int sor;
     cout << "\nPasirinkite rusiavima\n"
-         << "1 - nerusiuoti\n2 - pagal varda zemyn\n3 - pagal pavarde zemyn\n4 - pagal Galutinis (vid.) zemyn\n5 - pagal Galutinis (med).) zemyn\n"
-         << "6 - pagal varda aukstyn\n7 - pagal pavarde aukstyn\n8 - pagal Galutinis (vid.) aukstyn\n9 - pagal Galutinis (med).) aukstyn\n\n";
+         << "1 - nerusiuoti\n2 - pagal varda zemyn\n3 - pagal pavarde zemyn\n"
+         << "4 - pagal Galutinis (vid.) zemyn\n5 - pagal Galutinis (med.) zemyn\n"
+         << "6 - pagal varda aukstyn\n7 - pagal pavarde aukstyn\n"
+         << "8 - pagal Galutinis (vid.) aukstyn\n9 - pagal Galutinis (med.) aukstyn\n\n";
     sor = saugusInt("Pasirinkimas: ", 1, 9);
+
+    if (sor != 1)
+    {
+        sortS(gerai, sor);
+        sortS(blogai, sor);
+    }
+
+    auto printTable = [](auto &out, const vector<studentas> &v, const string &label)
+    {
+        out << "\n===== " << label << " =====\n\n";
+        out << std::left
+            << setw(20) << "Vardas"
+            << setw(20) << "Pavarde"
+            << setw(17) << "Galutinis (vid.)"
+            << setw(17) << "Galutinis (med.)" << "\n\n";
+        for (const auto &st : v)
+        {
+            out << std::left
+                << setw(20) << st.vardas
+                << setw(20) << st.pavarde
+                << setw(17) << std::setprecision(3) << st.galVid
+                << setw(17) << std::setprecision(3) << st.galMed << "\n";
+        }
+    };
 
     if (m == 1)
     {
-        if (sor != 1)
-            sortS(s, sor);
-        cout << "\n===== REZULTATAI =====\n";
-        cout << "\nVardas               Pavarde              Galutinis (vid.)  Galutinis (med.)  \n\n";
-        for (const auto &st : s)
-        {
-            cout << setw(20) << left << st.vardas << " "
-                 << setw(20) << left << st.pavarde << " "
-                 << setw(17) << left << std::setprecision(3) << st.galVid << " "
-                 << setw(17) << left << std::setprecision(3) << st.galMed << "\n";
-        }
+        printTable(cout, gerai, "GALVOCIAI  (galutinis >= 5.0)");
+        printTable(cout, blogai, "VARGSIUKAI (galutinis  < 5.0)");
     }
     else
     {
-        if (sor != 1)
-            sortS(s, sor);
-        ofstream out("isvedimas.txt");
-        out << "===== REZULTATAI =====\n";
-        out << "\nVardas               Pavarde              Galutinis (vid.)  Galutinis (med.)  \n\n";
-        for (const auto &st : s)
-        {
-            out << setw(20) << left << st.vardas << " "
-                << setw(20) << left << st.pavarde << " "
-                << setw(17) << left << std::setprecision(3) << st.galVid << " "
-                << setw(17) << left << std::setprecision(3) << st.galMed << "\n";
-        }
+        issaugotiStudentus(gerai, "galvociai.txt");
+        issaugotiStudentus(blogai, "vargsiukai.txt");
+        cout << "Issaugota: galvociai.txt, vargsiukai.txt\n";
     }
 
     cout << "\n\nIveskite 'close' jog uzdaryti programa\n";
