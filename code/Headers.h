@@ -23,8 +23,8 @@ using std::setw;
 using std::sort;
 using std::string;
 using std::vector;
-using std::chrono::duration;
 using std::chrono::high_resolution_clock;
+using std::chrono::duration;
 
 struct studentas
 {
@@ -37,14 +37,15 @@ struct studentas
     double galMed = 0;
 };
 
+// Core utilities (Functions.cpp)
 double skaiciuotiMediana(vector<int> &v);
-int saugusInt(string tekstas, int min, int max);
-void sortS(vector<studentas> &s, int sortType);
+int    saugusInt(string tekstas, int min, int max);
+void   sortS(vector<studentas> &s, int sortType);
+bool   nuskaitytiIsFailo(const string &filename, vector<studentas> &s);
 
-// v0.4
+// v0.4 (v04.cpp)
 void generuotiFaila(const string &filename, int studentCount, int gradeCount);
 void generuotiVisusFailus();
-bool nuskaitytiIsFailo(const string &filename, vector<studentas> &s);
 void isskirtiStudentus(const vector<studentas> &visi,
                        vector<studentas> &gerai,
                        vector<studentas> &blogai);

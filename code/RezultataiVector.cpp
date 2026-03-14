@@ -170,22 +170,10 @@ int main()
 
     else // m == 2
     {
-        try
+        if (!nuskaitytiIsFailo("kursiokai.txt", s))
         {
-            string filename;
-            cout << "Iveskite failo pavadinima: ";
-            cin >> filename;
-
-            if (!nuskaitytiIsFailo(filename, s))
-            {
-                cout << "Failas tuscias arba netinkamas formatas.\n";
-                return 0;
-            }
-        }
-        catch (const std::exception &e)
-        {
-            cout << "Klaida: " << e.what() << endl;
-            return 1;
+            cout << "Failas tuscias arba netinkamas formatas.\n";
+            return 0;
         }
     }
 
