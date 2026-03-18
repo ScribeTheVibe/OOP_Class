@@ -15,7 +15,7 @@ A C++ student grade management program. Reads student records from files or cons
 ## Build
 
 ```bash
-g++ -O2 -o studentai main.cpp Functions.cpp FileGen.cpp Data.cpp
+g++ -O2 -o studentai RezultataiVector.cpp Methods.cpp FileGen.cpp VardaiPavardes.cpp 
 ```
 
 ## Usage
