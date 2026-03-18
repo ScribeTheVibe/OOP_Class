@@ -37,21 +37,17 @@ struct studentas
     double galMed = 0;
 };
 
-// Core utilities (Functions.cpp)
 double skaiciuotiMediana(vector<int> &v);
 int    saugusInt(string tekstas, int min, int max);
 void   sortS(vector<studentas> &s, int sortType);
 bool   nuskaitytiIsFailo(const string &filename, vector<studentas> &s);
 
-// v0.4 (v04.cpp)
 void generuotiFaila(const string &filename, int studentCount, int gradeCount);
 void generuotiVisusFailus();
 void isskirtiStudentus(const vector<studentas> &visi,
                        vector<studentas> &gerai,
                        vector<studentas> &blogai);
-void issaugotiStudentus(const vector<studentas> &s, const string &filename);
-void testas1_failuKurimas();
-void testas2_duomenuApdorojimas(const string &filename);
+void testas_duomenuApdorojimas(const string &filename, int sorting);
 
 extern string vardai[15];
 extern string pavardes[15];

@@ -9,17 +9,21 @@ void generuotiFaila(const string &filename, int studentCount, int gradeCount)
         return;
     }
 
-    file << "Vardas Pavarde";
-    for (int i = 1; i <= gradeCount; i++)
-        file << " ND" << i;
-    file << " Egz.\n";
+    file << setw(24) << left << "Vardas" 
+        << setw(30) << left << "Pavarde";
+    for (int i = 1; i <= gradeCount; i++) {
+        file << setw(10) << left << ("ND" + std::to_string(i));
+    }
+    file << "Egz.\n";
 
-    for (int i = 1; i <= studentCount; i++)
-    {
-        file << "Vardas" << i << " Pavarde" << i;
-        for (int j = 0; j < gradeCount; j++)
-            file << " " << rand() % 11;
-        file << " " << rand() % 11 << "\n";
+    for (int i = 1; i <= studentCount; i++) {
+        file << setw(24) << left << ("Vardas" + std::to_string(i))
+            << setw(30) << left << ("Pavarde" + std::to_string(i));
+
+        for (int j = 0; j < gradeCount; j++) {
+            file << setw(10) << left << (rand() % 11);
+        }
+        file << (rand() % 11) << "\n";
     }
 
     file.close();
@@ -65,8 +69,13 @@ void isskirtiStudentus(const vector<studentas> &visi,
     }
 }
 
-void issaugotiStudentus(const vector<studentas> &s, const string &filename)
+void issaugotiStudentus(vector<studentas> &s, const string &filename, int sor)
 {
+    if (sor != 1)
+    {
+        sortS(s, sor);
+    }
+
     ofstream out(filename);
     out << std::left
         << setw(20) << "Vardas"
@@ -84,40 +93,7 @@ void issaugotiStudentus(const vector<studentas> &s, const string &filename)
     }
 }
 
-void testas1_failuKurimas()
-{
-    cout << "\n===== TYRIMAS 1: Failu kurimas =====\n";
-    cout << std::left << setw(25) << "Failas"
-         << setw(12) << "Irasu"
-         << "Laikas (s)\n";
-    cout << string(50, '-') << "\n";
-
-    int    sizes[] = {1000, 10000, 100000, 1000000, 10000000};
-    string names[] = {
-        "test1_1000.txt",
-        "test1_10000.txt",
-        "test1_100000.txt",
-        "test1_1000000.txt",
-        "test1_10000000.txt"
-    };
-
-    srand(42);
-
-    for (int i = 0; i < 5; i++)
-    {
-        auto t1 = high_resolution_clock::now();
-        generuotiFaila(names[i], sizes[i], 5);
-        auto t2 = high_resolution_clock::now();
-        duration<double> dt = t2 - t1;
-
-        cout << std::left << setw(25) << names[i]
-             << setw(12) << sizes[i]
-             << std::fixed << std::setprecision(3) << dt.count() << "\n";
-    }
-    cout << "\n";
-}
-
-void testas2_duomenuApdorojimas(const string &filename)
+void testas_duomenuApdorojimas(const string &filename, int sorting)
 {
     cout << "\n--- " << filename << " ---\n";
 
@@ -135,8 +111,8 @@ void testas2_duomenuApdorojimas(const string &filename)
 
     string base = filename.substr(0, filename.find_last_of('.'));
     auto t5 = high_resolution_clock::now();
-    issaugotiStudentus(gerai,  base + "_galvociai.txt");
-    issaugotiStudentus(blogai, base + "_vargsiukai.txt");
+    issaugotiStudentus(gerai,  base + "_galvociai.txt", sorting);
+    issaugotiStudentus(blogai, base + "_vargsiukai.txt", sorting);
     auto t6 = high_resolution_clock::now();
 
     duration<double> dtRead  = t2 - t1;

@@ -14,7 +14,7 @@ int main()
     cout << "4 - sugeneruoti studentu vardus, pavardes ir pazymius\n";
     cout << "5 - baigti darba\n";
     cout << "6 - sugeneruoti 5 duomenu failus\n";
-    cout << "7 - atlikti greicio testus\n\n";
+    cout << "7 - atlikti duomenu apdorojima\n\n";
 
     m = saugusInt("Pasirinkimas: ", 1, 7);
     cout << endl;
@@ -30,27 +30,23 @@ int main()
 
     if (m == 7)
     {
-        cout << "\nPasirinkite tyrima:\n"
-             << "1 - Tyrimas 1 (failu kurimas)\n"
-             << "2 - Tyrimas 2 (duomenu apdorojimas)\n\n";
-        int t = saugusInt("Pasirinkimas: ", 1, 2);
+        cout << "\n===== TYRIMAS 2: Duomenu apdorojimas =====\n";
+        int sor;
+        cout << "\nPasirinkite rusiavima\n"
+             << "1 - nerusiuoti\n2 - pagal varda zemyn\n3 - pagal pavarde zemyn\n"
+             << "4 - pagal Galutinis (vid.) zemyn\n5 - pagal Galutinis (med.) zemyn\n"
+             << "6 - pagal varda aukstyn\n7 - pagal pavarde aukstyn\n"
+             << "8 - pagal Galutinis (vid.) aukstyn\n9 - pagal Galutinis (med.) aukstyn\n\n";
+        sor = saugusInt("Pasirinkimas: ", 1, 9);
 
-        if (t == 1)
-        {
-            testas1_failuKurimas();
-        }
-        else
-        {
-            cout << "\n===== TYRIMAS 2: Duomenu apdorojimas =====\n";
-            string files[] = {
-                "studentai_1000.txt",
-                "studentai_10000.txt",
-                "studentai_100000.txt",
-                "studentai_1000000.txt",
-                "studentai_10000000.txt"};
-            for (const auto &f : files)
-                testas2_duomenuApdorojimas(f);
-        }
+        string files[] = {
+            "studentai_1000.txt",
+            "studentai_10000.txt",
+            "studentai_100000.txt",
+            "studentai_1000000.txt",
+            "studentai_10000000.txt"};
+        for (const auto &f : files)
+            testas_duomenuApdorojimas(f, sor);
         return 0;
     }
 
@@ -201,33 +197,53 @@ int main()
         sortS(blogai, sor);
     }
 
-    auto printTable = [](auto &out, const vector<studentas> &v, const string &label)
-    {
-        out << "\n===== " << label << " =====\n\n";
-        out << std::left
-            << setw(20) << "Vardas"
-            << setw(20) << "Pavarde"
-            << setw(17) << "Galutinis (vid.)"
-            << setw(17) << "Galutinis (med.)" << "\n\n";
-        for (const auto &st : v)
-        {
-            out << std::left
-                << setw(20) << st.vardas
-                << setw(20) << st.pavarde
-                << setw(17) << std::setprecision(3) << st.galVid
-                << setw(17) << std::setprecision(3) << st.galMed << "\n";
-        }
-    };
 
     if (m == 1)
     {
-        printTable(cout, gerai, "GALVOCIAI  (galutinis >= 5.0)");
-        printTable(cout, blogai, "VARGSIUKAI (galutinis  < 5.0)");
+        cout << "\n===== GALVOCIAI  (galutinis >= 5.0) =====\n\n";
+        cout << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
+             << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
+        for (const auto &st : gerai)
+        {
+            cout << std::left << setw(20) << st.vardas << setw(20) << st.pavarde
+                 << setw(17) << std::fixed << std::setprecision(2) << st.galVid
+                 << setw(17) << std::fixed << std::setprecision(2) << st.galMed << "\n";
+        }
+
+        cout << "\n===== VARGSIUKAI (galutinis < 5.0) =====\n\n";
+        cout << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
+             << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
+        for (const auto &st : blogai)
+        {
+            cout << std::left << setw(20) << st.vardas << setw(20) << st.pavarde
+                 << setw(17) << std::fixed << std::setprecision(2) << st.galVid
+                 << setw(17) << std::fixed << std::setprecision(2) << st.galMed << "\n";
+        }
     }
     else
     {
-        issaugotiStudentus(gerai, "galvociai.txt");
-        issaugotiStudentus(blogai, "vargsiukai.txt");
+        ofstream outGerai("galvociai.txt");
+        outGerai << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
+                 << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
+        for (const auto &st : gerai)
+        {
+            outGerai << std::left << setw(20) << st.vardas << setw(20) << st.pavarde
+                     << setw(17) << std::fixed << std::setprecision(2) << st.galVid
+                     << setw(17) << std::fixed << std::setprecision(2) << st.galMed << "\n";
+        }
+        outGerai.close();
+
+        ofstream outBlogai("vargsiukai.txt");
+        outBlogai << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
+                  << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
+        for (const auto &st : blogai)
+        {
+            outBlogai << std::left << setw(20) << st.vardas << setw(20) << st.pavarde
+                      << setw(17) << std::fixed << std::setprecision(2) << st.galVid
+                      << setw(17) << std::fixed << std::setprecision(2) << st.galMed << "\n";
+        }
+        outBlogai.close();
+
         cout << "Issaugota: galvociai.txt, vargsiukai.txt\n";
     }
 
