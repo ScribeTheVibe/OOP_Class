@@ -122,8 +122,8 @@ void testas_duomenuApdorojimas(const string &filename, int sorting)
 
     cout << std::fixed << std::setprecision(3);
     cout << "  Nuskaitymas:  " << dtRead.count()  << " s  (" << visi.size() << " irasu)\n";
-    cout << "  Rusiavimas:   " << dtSplit.count() << " s  (gerai: " << gerai.size()
+    cout << "  Skirstymas:   " << dtSplit.count() << " s  (gerai: " << gerai.size()
          << ", blogai: " << blogai.size() << ")\n";
-    cout << "  Issaugojimas: " << dtWrite.count() << " s\n";
+    cout << "  Rusiavimas + Issaugojimas: " << dtWrite.count() << " s\n";
     cout << "  VISO:         " << dtTotal.count() << " s\n";
 }
