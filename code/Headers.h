@@ -198,6 +198,33 @@ void issaugotiStudentus(const Container &s, const string &filename)
     }
 }
 
+// ── Strategy 3: stable_partition in-place, then splice/move the boundary ─────
+// std::stable_partition rearranges the container so that all elements satisfying
+// the predicate (kietiakai) come first, vargsiukai come after, and returns an
+// iterator to the first vargsiukas.
+//   - list   → splice() moves the vargsiukai half into blogai in O(1), no copies
+//   - vector/deque → construct blogai from [mid, end), then erase that range
+template<typename Container>
+void isskirtiStudentus3(Container &visi, Container &blogai)
+{
+    auto predicate = [](const studentas &s) { return s.galVid >= 5.0; };
+
+    if constexpr (std::is_same_v<Container, list<studentas>>)
+    {
+        // stable_partition works on bidirectional iterators so list is fine
+        auto mid = std::stable_partition(visi.begin(), visi.end(), predicate);
+        // splice transfers [mid, end) to blogai in O(1) — no element copies
+        blogai.splice(blogai.begin(), visi, mid, visi.end());
+    }
+    else
+    {
+        auto mid = std::stable_partition(visi.begin(), visi.end(), predicate);
+        // construct blogai from the vargsiukai half, then drop it from visi
+        blogai.assign(mid, visi.end());
+        visi.erase(mid, visi.end());
+    }
+}
+
 // ── Strategy 1 test runner ────────────────────────────────────────────────────
 template<typename Container>
 void testas_vienasTipas(const string &filename, int sorting, const string &tipoPavadinimas)
@@ -288,7 +315,52 @@ void testas_vienasTipas2(const string &filename, int sorting, const string &tipo
     cout << "    VISO:        " << dtTotal.count() << " s  (be issaugojimo)\n\n";
 }
 
-// ── Runs both strategies for all three container types for one file ───────────
+// ── Strategy 3 test runner ────────────────────────────────────────────────────
+template<typename Container>
+void testas_vienasTipas3(const string &filename, int sorting, const string &tipoPavadinimas)
+{
+    cout << "  [" << tipoPavadinimas << " | 3 strategija]\n";
+
+    // 1. Reading
+    Container visi;
+    auto t1 = high_resolution_clock::now();
+    bool ok = nuskaitytiIsFailo(filename, visi);
+    auto t2 = high_resolution_clock::now();
+
+    if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+
+    // 2. Sorting
+    auto t3 = high_resolution_clock::now();
+    if (sorting != 1)
+        sortS(visi, sorting);
+    auto t4 = high_resolution_clock::now();
+
+    // 3. stable_partition in-place, then splice/move at the boundary
+    Container blogai;
+    auto t5 = high_resolution_clock::now();
+    isskirtiStudentus3(visi, blogai);
+    auto t6 = high_resolution_clock::now();
+
+    // Writing — NOT timed; visi now holds only kietiakai
+    string base = filename.substr(0, filename.find_last_of('.'));
+    string sufx = "_" + tipoPavadinimas + "_s3";
+    issaugotiStudentus(visi,   base + sufx + "_galvociai.txt");
+    issaugotiStudentus(blogai, base + sufx + "_vargsiukai.txt");
+
+    duration<double> dtRead  = t2 - t1;
+    duration<double> dtSort  = t4 - t3;
+    duration<double> dtSplit = t6 - t5;
+    duration<double> dtTotal = dtRead + dtSort + dtSplit;
+
+    cout << std::fixed << std::setprecision(3);
+    cout << "    Nuskaitymas: " << dtRead.count()  << " s  (" << visi.size() + blogai.size() << " irasu)\n";
+    cout << "    Rusiavimas:  " << dtSort.count()  << " s\n";
+    cout << "    Skirstymas:  " << dtSplit.count() << " s  (kietiakai: " << visi.size()
+         << ", vargsiukai: " << blogai.size() << ")\n";
+    cout << "    VISO:        " << dtTotal.count() << " s  (be issaugojimo)\n\n";
+}
+
+// ── Runs all 3 strategies × 3 containers for one file ────────────────────────
 inline void testas_duomenuApdorojimas(const string &filename, int sorting)
 {
     cout << "\n=== " << filename << " ===\n\n";
@@ -302,6 +374,11 @@ inline void testas_duomenuApdorojimas(const string &filename, int sorting)
     testas_vienasTipas2<vector<studentas>>(filename, sorting, "vector");
     testas_vienasTipas2<list<studentas>>  (filename, sorting, "list");
     testas_vienasTipas2<deque<studentas>> (filename, sorting, "deque");
+
+    cout << "-- Strategija 3 (stable_partition + splice/move) --\n";
+    testas_vienasTipas3<vector<studentas>>(filename, sorting, "vector");
+    testas_vienasTipas3<list<studentas>>  (filename, sorting, "list");
+    testas_vienasTipas3<deque<studentas>> (filename, sorting, "deque");
 }
 
 #endif
