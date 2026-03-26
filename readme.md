@@ -2,14 +2,6 @@
 
 Programa skirta studentų duomenų nuskaitymui, rūšiavimui ir skirstymui į dvi grupes: **kietiakus** (galutinis ≥ 5.0) ir **vargšiukus** (galutinis < 5.0).
 
-## Turinys
-- [Versijų istorija](#versijų-istorija)
-- [Diegimo instrukcija](#diegimo-instrukcija)
-- [Paleidimo instrukcija](#paleidimo-instrukcija)
-- [Programos naudojimas](#programos-naudojimas)
-- [Konteinerių tyrimas](#konteinerių-tyrimas)
-- [Strategijų tyrimas](#strategijų-tyrimas)
-
 ## Diegimo instrukcija
 
 **Reikalavimai**
