@@ -11,7 +11,7 @@ Programa skirta studentų duomenų nuskaitymui, rūšiavimui ir skirstymui į dv
 **Su Make (Unix)**
 ```bash
 git clone [https://github.com/jusu-vartotojas/studentu-analize.git](https://github.com/jusu-vartotojas/studentu-analize.git)
-cd cd oop_class
+cd oop_class
 make
 ```
 
