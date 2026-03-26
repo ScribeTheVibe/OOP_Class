@@ -11,14 +11,14 @@ Programa skirta studentų duomenų nuskaitymui, rūšiavimui ir skirstymui į dv
 **Su Make (Unix)**
 ```bash
 git clone [https://github.com/jusu-vartotojas/studentu-analize.git](https://github.com/jusu-vartotojas/studentu-analize.git)
-cd studentu-analize
+cd cd oop_class
 make
 ```
 
 **Su CMake (Unix / Windows)**
 ```bash
 git clone [https://github.com/jusu-vartotojas/studentu-analize.git](https://github.com/jusu-vartotojas/studentu-analize.git)
-cd studentu-analize
+cd oop_class
 mkdir build && cd build
 cmake ..
 cmake --build .
