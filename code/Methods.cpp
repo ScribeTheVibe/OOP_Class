@@ -1,5 +1,7 @@
 #include "Headers.h"
 
+// ── Math / input helpers ──────────────────────────────────────────────────────
+
 double skaiciuotiMediana(vector<int> &v)
 {
     if (v.empty())
@@ -17,7 +19,6 @@ double skaiciuotiMediana(vector<int> &v)
 int saugusInt(string tekstas, int min, int max)
 {
     int x;
-
     while (true)
     {
         cout << tekstas;
@@ -29,76 +30,56 @@ int saugusInt(string tekstas, int min, int max)
     }
 }
 
-void sortS(vector<studentas> &s, int sortType)
-{
-    sort(s.begin(), s.end(),
-         [sortType](const studentas &a, const studentas &b)
-         {
-             switch (sortType)
-             {
-             case 2: return a.vardas  > b.vardas;
-             case 3: return a.pavarde > b.pavarde;
-             case 4: return a.galVid  > b.galVid;
-             case 5: return a.galMed  > b.galMed;
-             case 6: return a.vardas  < b.vardas;
-             case 7: return a.pavarde < b.pavarde;
-             case 8: return a.galVid  < b.galVid;
-             case 9: return a.galMed  < b.galMed;
-             default: return false;
-             }
-         });
-}
+// ── File generation ───────────────────────────────────────────────────────────
 
-bool nuskaitytiIsFailo(const string &filename, vector<studentas> &s)
+void generuotiFaila(const string &filename, int studentCount, int gradeCount)
 {
-    ifstream file(filename);
+    ofstream file(filename);
     if (!file.is_open())
     {
-        cout << "Klaida: nepavyko atidaryti " << filename << "\n";
-        return false;
+        cout << "Klaida: nepavyko sukurti failo " << filename << "\n";
+        return;
     }
 
-    string line;
-    getline(file, line); // skip header
+    file << setw(24) << left << "Vardas"
+         << setw(30) << left << "Pavarde";
+    for (int i = 1; i <= gradeCount; i++)
+        file << setw(10) << left << ("ND" + std::to_string(i));
+    file << "Egz.\n";
 
-    bool anyRead = false;
-
-    while (getline(file, line))
+    for (int i = 1; i <= studentCount; i++)
     {
-        if (line.empty())
-            continue;
-
-        istringstream iss(line);
-        studentas tempS;
-
-        if (!(iss >> tempS.vardas >> tempS.pavarde))
-            continue;
-
-        int temp;
-        while (iss >> temp)
-        {
-            tempS.pazimys.push_back(temp);
-            tempS.vidurkis += temp;
-        }
-
-        if (tempS.pazimys.empty())
-            continue;
-
-        tempS.rezultatas  = tempS.pazimys.back();
-        tempS.vidurkis   -= tempS.rezultatas;
-        tempS.pazimys.pop_back();
-
-        if (tempS.pazimys.empty())
-            continue;
-
-        tempS.vidurkis /= tempS.pazimys.size();
-        tempS.mediana   = skaiciuotiMediana(tempS.pazimys);
-        tempS.galVid    = tempS.vidurkis * 0.4 + tempS.rezultatas * 0.6;
-        tempS.galMed    = tempS.mediana  * 0.4 + tempS.rezultatas * 0.6;
-
-        s.push_back(tempS);
-        anyRead = true;
+        file << setw(24) << left << ("Vardas"  + std::to_string(i))
+             << setw(30) << left << ("Pavarde" + std::to_string(i));
+        for (int j = 0; j < gradeCount; j++)
+            file << setw(10) << left << (rand() % 11);
+        file << (rand() % 11) << "\n";
     }
+}
 
-    return anyRead;
+void generuotiVisusFailus()
+{
+    srand(time(NULL));
+    const int gradeCount = 5;
+
+    int    sizes[] = {1000, 10000, 100000, 1000000, 10000000};
+    string names[] = {
+        "output/studentai_1000.txt",
+        "output/studentai_10000.txt",
+        "output/studentai_100000.txt",
+        "output/studentai_1000000.txt",
+        "output/studentai_10000000.txt"
+    };
+
+    for (int i = 0; i < 5; i++)
+    {
+        cout << "Generuojamas " << names[i] << " (" << sizes[i] << " irasu)...";
+        cout.flush();
+        auto t1 = high_resolution_clock::now();
+        generuotiFaila(names[i], sizes[i], gradeCount);
+        auto t2 = high_resolution_clock::now();
+        duration<double> dt = t2 - t1;
+        cout << " " << std::fixed << std::setprecision(3) << dt.count() << " s\n";
+    }
+    cout << "Visi failai sugeneruoti.\n";
 }
