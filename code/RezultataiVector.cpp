@@ -208,24 +208,8 @@ int main()
     }
     else
     {
-        ofstream outGerai("output/galvociai.txt");
-        outGerai << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
-                 << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
-        for (const auto &st : gerai)
-            outGerai << std::left << setw(20) << st.vardas << setw(20) << st.pavarde
-                     << setw(17) << std::fixed << std::setprecision(2) << st.galVid
-                     << setw(17) << std::fixed << std::setprecision(2) << st.galMed << "\n";
-        outGerai.close();
-
-        ofstream outBlogai("output/vargsiukai.txt");
-        outBlogai << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
-                  << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
-        for (const auto &st : blogai)
-            outBlogai << std::left << setw(20) << st.vardas << setw(20) << st.pavarde
-                      << setw(17) << std::fixed << std::setprecision(2) << st.galVid
-                      << setw(17) << std::fixed << std::setprecision(2) << st.galMed << "\n";
-        outBlogai.close();
-
+        issaugotiStudentus(gerai,  "output/galvociai.txt");
+        issaugotiStudentus(blogai, "output/vargsiukai.txt");
         cout << "Issaugota: galvociai.txt, vargsiukai.txt\n";
     }
 
