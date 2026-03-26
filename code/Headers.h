@@ -225,49 +225,72 @@ void isskirtiStudentus3(Container &visi, Container &blogai)
     }
 }
 
+// Number of timed runs — results are averaged across all runs.
+// The write step is always done once only (after all runs complete).
+static constexpr int RUNS = 3;
+
 // ── Strategy 1 test runner ────────────────────────────────────────────────────
 template<typename Container>
 void testas_vienasTipas(const string &filename, int sorting, const string &tipoPavadinimas)
 {
     cout << "  [" << tipoPavadinimas << " | 1 strategija]\n";
 
-    // 1. Reading
-    Container visi;
-    auto t1 = high_resolution_clock::now();
-    bool ok = nuskaitytiIsFailo(filename, visi);
-    auto t2 = high_resolution_clock::now();
+    double sumRead = 0, sumSort = 0, sumSplit = 0;
+    size_t nVisi = 0, nGerai = 0, nBlogai = 0;
+    Container lastGerai, lastBlogai; // kept from final run for writing
 
-    if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+    for (int run = 0; run < RUNS; run++)
+    {
+        // 1. Reading — fresh container each run
+        Container visi;
+        auto t1 = high_resolution_clock::now();
+        bool ok = nuskaitytiIsFailo(filename, visi);
+        auto t2 = high_resolution_clock::now();
 
-    // 2. Sorting
-    auto t3 = high_resolution_clock::now();
-    if (sorting != 1)
-        sortS(visi, sorting);
-    auto t4 = high_resolution_clock::now();
+        if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+        nVisi = visi.size();
 
-    // 3. Splitting into two NEW containers (original untouched)
-    Container gerai, blogai;
-    auto t5 = high_resolution_clock::now();
-    isskirtiStudentus(visi, gerai, blogai);
-    auto t6 = high_resolution_clock::now();
+        // 2. Sorting
+        auto t3 = high_resolution_clock::now();
+        if (sorting != 1) sortS(visi, sorting);
+        auto t4 = high_resolution_clock::now();
 
-    // Writing — NOT timed
+        // 3. Split into two new containers
+        Container gerai, blogai;
+        auto t5 = high_resolution_clock::now();
+        isskirtiStudentus(visi, gerai, blogai);
+        auto t6 = high_resolution_clock::now();
+
+        sumRead  += duration<double>(t2 - t1).count();
+        sumSort  += duration<double>(t4 - t3).count();
+        sumSplit += duration<double>(t6 - t5).count();
+
+        if (run == RUNS - 1)
+        {
+            nGerai = gerai.size(); nBlogai = blogai.size();
+            lastGerai  = std::move(gerai);
+            lastBlogai = std::move(blogai);
+        }
+    }
+
+    // Writing — NOT timed, done once after all runs
     string base = filename.substr(0, filename.find_last_of('.'));
     string sufx = "_" + tipoPavadinimas + "_s1";
-    issaugotiStudentus(gerai,  base + sufx + "_galvociai.txt");
-    issaugotiStudentus(blogai, base + sufx + "_vargsiukai.txt");
+    issaugotiStudentus(lastGerai,  base + sufx + "_galvociai.txt");
+    issaugotiStudentus(lastBlogai, base + sufx + "_vargsiukai.txt");
 
-    duration<double> dtRead  = t2 - t1;
-    duration<double> dtSort  = t4 - t3;
-    duration<double> dtSplit = t6 - t5;
-    duration<double> dtTotal = dtRead + dtSort + dtSplit;
+    double avgRead  = sumRead  / RUNS;
+    double avgSort  = sumSort  / RUNS;
+    double avgSplit = sumSplit / RUNS;
+    double avgTotal = avgRead + avgSort + avgSplit;
 
     cout << std::fixed << std::setprecision(3);
-    cout << "    Nuskaitymas: " << dtRead.count()  << " s  (" << visi.size() << " irasu)\n";
-    cout << "    Rusiavimas:  " << dtSort.count()  << " s\n";
-    cout << "    Skirstymas:  " << dtSplit.count() << " s  (gerai: " << gerai.size()
-         << ", blogai: " << blogai.size() << ")\n";
-    cout << "    VISO:        " << dtTotal.count() << " s  (be issaugojimo)\n\n";
+    cout << "    Vidurkis is " << RUNS << " kartu:\n";
+    cout << "    Nuskaitymas: " << avgRead  << " s  (" << nVisi  << " irasu)\n";
+    cout << "    Rusiavimas:  " << avgSort  << " s\n";
+    cout << "    Skirstymas:  " << avgSplit << " s  (gerai: " << nGerai
+         << ", blogai: " << nBlogai << ")\n";
+    cout << "    VISO:        " << avgTotal << " s  (be issaugojimo)\n\n";
 }
 
 // ── Strategy 2 test runner ────────────────────────────────────────────────────
@@ -276,43 +299,62 @@ void testas_vienasTipas2(const string &filename, int sorting, const string &tipo
 {
     cout << "  [" << tipoPavadinimas << " | 2 strategija]\n";
 
-    // 1. Reading
-    Container visi;
-    auto t1 = high_resolution_clock::now();
-    bool ok = nuskaitytiIsFailo(filename, visi);
-    auto t2 = high_resolution_clock::now();
+    double sumRead = 0, sumSort = 0, sumSplit = 0;
+    size_t nVisi = 0, nKietiakai = 0, nBlogai = 0;
+    Container lastVisi, lastBlogai;
 
-    if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+    for (int run = 0; run < RUNS; run++)
+    {
+        // 1. Reading — fresh container each run
+        Container visi;
+        auto t1 = high_resolution_clock::now();
+        bool ok = nuskaitytiIsFailo(filename, visi);
+        auto t2 = high_resolution_clock::now();
 
-    // 2. Sorting
-    auto t3 = high_resolution_clock::now();
-    if (sorting != 1)
-        sortS(visi, sorting);
-    auto t4 = high_resolution_clock::now();
+        if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+        nVisi = visi.size();
 
-    // 3. Splitting: blogai filled, vargsiukai erased from visi → visi becomes kietiakai
-    Container blogai;
-    auto t5 = high_resolution_clock::now();
-    isskirtiStudentus2(visi, blogai);
-    auto t6 = high_resolution_clock::now();
+        // 2. Sorting
+        auto t3 = high_resolution_clock::now();
+        if (sorting != 1) sortS(visi, sorting);
+        auto t4 = high_resolution_clock::now();
 
-    // Writing — NOT timed; visi now holds only kietiakai
+        // 3. One new container; erase vargsiukai from original
+        Container blogai;
+        auto t5 = high_resolution_clock::now();
+        isskirtiStudentus2(visi, blogai);
+        auto t6 = high_resolution_clock::now();
+
+        sumRead  += duration<double>(t2 - t1).count();
+        sumSort  += duration<double>(t4 - t3).count();
+        sumSplit += duration<double>(t6 - t5).count();
+
+        if (run == RUNS - 1)
+        {
+            nKietiakai = visi.size(); nBlogai = blogai.size();
+            lastVisi   = std::move(visi);
+            lastBlogai = std::move(blogai);
+        }
+    }
+
+    // Writing — NOT timed, done once after all runs
     string base = filename.substr(0, filename.find_last_of('.'));
     string sufx = "_" + tipoPavadinimas + "_s2";
-    issaugotiStudentus(visi,   base + sufx + "_galvociai.txt");
-    issaugotiStudentus(blogai, base + sufx + "_vargsiukai.txt");
+    issaugotiStudentus(lastVisi,   base + sufx + "_galvociai.txt");
+    issaugotiStudentus(lastBlogai, base + sufx + "_vargsiukai.txt");
 
-    duration<double> dtRead  = t2 - t1;
-    duration<double> dtSort  = t4 - t3;
-    duration<double> dtSplit = t6 - t5;
-    duration<double> dtTotal = dtRead + dtSort + dtSplit;
+    double avgRead  = sumRead  / RUNS;
+    double avgSort  = sumSort  / RUNS;
+    double avgSplit = sumSplit / RUNS;
+    double avgTotal = avgRead + avgSort + avgSplit;
 
     cout << std::fixed << std::setprecision(3);
-    cout << "    Nuskaitymas: " << dtRead.count()  << " s  (" << visi.size() + blogai.size() << " irasu)\n";
-    cout << "    Rusiavimas:  " << dtSort.count()  << " s\n";
-    cout << "    Skirstymas:  " << dtSplit.count() << " s  (kietiakai: " << visi.size()
-         << ", vargsiukai: " << blogai.size() << ")\n";
-    cout << "    VISO:        " << dtTotal.count() << " s  (be issaugojimo)\n\n";
+    cout << "    Vidurkis is " << RUNS << " kartu:\n";
+    cout << "    Nuskaitymas: " << avgRead  << " s  (" << nVisi << " irasu)\n";
+    cout << "    Rusiavimas:  " << avgSort  << " s\n";
+    cout << "    Skirstymas:  " << avgSplit << " s  (kietiakai: " << nKietiakai
+         << ", vargsiukai: " << nBlogai << ")\n";
+    cout << "    VISO:        " << avgTotal << " s  (be issaugojimo)\n\n";
 }
 
 // ── Strategy 3 test runner ────────────────────────────────────────────────────
@@ -321,43 +363,62 @@ void testas_vienasTipas3(const string &filename, int sorting, const string &tipo
 {
     cout << "  [" << tipoPavadinimas << " | 3 strategija]\n";
 
-    // 1. Reading
-    Container visi;
-    auto t1 = high_resolution_clock::now();
-    bool ok = nuskaitytiIsFailo(filename, visi);
-    auto t2 = high_resolution_clock::now();
+    double sumRead = 0, sumSort = 0, sumSplit = 0;
+    size_t nVisi = 0, nKietiakai = 0, nBlogai = 0;
+    Container lastVisi, lastBlogai;
 
-    if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+    for (int run = 0; run < RUNS; run++)
+    {
+        // 1. Reading — fresh container each run
+        Container visi;
+        auto t1 = high_resolution_clock::now();
+        bool ok = nuskaitytiIsFailo(filename, visi);
+        auto t2 = high_resolution_clock::now();
 
-    // 2. Sorting
-    auto t3 = high_resolution_clock::now();
-    if (sorting != 1)
-        sortS(visi, sorting);
-    auto t4 = high_resolution_clock::now();
+        if (!ok) { cout << "    Nepavyko nuskaityti.\n"; return; }
+        nVisi = visi.size();
 
-    // 3. stable_partition in-place, then splice/move at the boundary
-    Container blogai;
-    auto t5 = high_resolution_clock::now();
-    isskirtiStudentus3(visi, blogai);
-    auto t6 = high_resolution_clock::now();
+        // 2. Sorting
+        auto t3 = high_resolution_clock::now();
+        if (sorting != 1) sortS(visi, sorting);
+        auto t4 = high_resolution_clock::now();
 
-    // Writing — NOT timed; visi now holds only kietiakai
+        // 3. stable_partition in-place, then splice/move at the boundary
+        Container blogai;
+        auto t5 = high_resolution_clock::now();
+        isskirtiStudentus3(visi, blogai);
+        auto t6 = high_resolution_clock::now();
+
+        sumRead  += duration<double>(t2 - t1).count();
+        sumSort  += duration<double>(t4 - t3).count();
+        sumSplit += duration<double>(t6 - t5).count();
+
+        if (run == RUNS - 1)
+        {
+            nKietiakai = visi.size(); nBlogai = blogai.size();
+            lastVisi   = std::move(visi);
+            lastBlogai = std::move(blogai);
+        }
+    }
+
+    // Writing — NOT timed, done once after all runs
     string base = filename.substr(0, filename.find_last_of('.'));
     string sufx = "_" + tipoPavadinimas + "_s3";
-    issaugotiStudentus(visi,   base + sufx + "_galvociai.txt");
-    issaugotiStudentus(blogai, base + sufx + "_vargsiukai.txt");
+    issaugotiStudentus(lastVisi,   base + sufx + "_galvociai.txt");
+    issaugotiStudentus(lastBlogai, base + sufx + "_vargsiukai.txt");
 
-    duration<double> dtRead  = t2 - t1;
-    duration<double> dtSort  = t4 - t3;
-    duration<double> dtSplit = t6 - t5;
-    duration<double> dtTotal = dtRead + dtSort + dtSplit;
+    double avgRead  = sumRead  / RUNS;
+    double avgSort  = sumSort  / RUNS;
+    double avgSplit = sumSplit / RUNS;
+    double avgTotal = avgRead + avgSort + avgSplit;
 
     cout << std::fixed << std::setprecision(3);
-    cout << "    Nuskaitymas: " << dtRead.count()  << " s  (" << visi.size() + blogai.size() << " irasu)\n";
-    cout << "    Rusiavimas:  " << dtSort.count()  << " s\n";
-    cout << "    Skirstymas:  " << dtSplit.count() << " s  (kietiakai: " << visi.size()
-         << ", vargsiukai: " << blogai.size() << ")\n";
-    cout << "    VISO:        " << dtTotal.count() << " s  (be issaugojimo)\n\n";
+    cout << "    Vidurkis is " << RUNS << " kartu:\n";
+    cout << "    Nuskaitymas: " << avgRead  << " s  (" << nVisi << " irasu)\n";
+    cout << "    Rusiavimas:  " << avgSort  << " s\n";
+    cout << "    Skirstymas:  " << avgSplit << " s  (kietiakai: " << nKietiakai
+         << ", vargsiukai: " << nBlogai << ")\n";
+    cout << "    VISO:        " << avgTotal << " s  (be issaugojimo)\n\n";
 }
 
 // ── Runs all 3 strategies × 3 containers for one file ────────────────────────
