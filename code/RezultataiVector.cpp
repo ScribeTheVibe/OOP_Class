@@ -40,11 +40,11 @@ int main()
         sor = saugusInt("Pasirinkimas: ", 1, 9);
 
         string files[] = {
-            "studentai_1000.txt",
-            "studentai_10000.txt",
-            "studentai_100000.txt",
-            "studentai_1000000.txt",
-            "studentai_10000000.txt"};
+            "output/studentai_1000.txt",
+            "output/studentai_10000.txt",
+            "output/studentai_100000.txt",
+            "output/studentai_1000000.txt",
+            "output/studentai_10000000.txt"};
         for (const auto &f : files)
             testas_duomenuApdorojimas(f, sor);
         return 0;
@@ -222,7 +222,7 @@ int main()
     }
     else
     {
-        ofstream outGerai("galvociai.txt");
+        ofstream outGerai("output/galvociai.txt");
         outGerai << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
                  << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
         for (const auto &st : gerai)
@@ -233,7 +233,7 @@ int main()
         }
         outGerai.close();
 
-        ofstream outBlogai("vargsiukai.txt");
+        ofstream outBlogai("output/vargsiukai.txt");
         outBlogai << std::left << setw(20) << "Vardas" << setw(20) << "Pavarde"
                   << setw(17) << "Galutinis (vid.)" << setw(17) << "Galutinis (med.)" << "\n\n";
         for (const auto &st : blogai)

@@ -36,11 +36,11 @@ void generuotiVisusFailus()
 
     int    sizes[] = {1000, 10000, 100000, 1000000, 10000000};
     string names[] = {
-        "studentai_1000.txt",
-        "studentai_10000.txt",
-        "studentai_100000.txt",
-        "studentai_1000000.txt",
-        "studentai_10000000.txt"
+        "output/studentai_1000.txt",
+        "output/studentai_10000.txt",
+        "output/studentai_100000.txt",
+        "output/studentai_1000000.txt",
+        "output/studentai_10000000.txt"
     };
 
     for (int i = 0; i < 5; i++)
