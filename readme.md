@@ -10,82 +10,161 @@ Programa skirta studentų duomenų nuskaitymui, rūšiavimui ir skirstymui į dv
 - [Konteinerių tyrimas](#konteinerių-tyrimas)
 - [Strategijų tyrimas](#strategijų-tyrimas)
 
+---
+
+## Versijų istorija
+
+| Versija | Aprašas |
+|---------|---------|
+| v0.1 | Pradinis variantas: rankinis įvedimas, skaičiavimai |
+| v0.2 | Failo nuskaitymas, išvedimas į failą |
+| v0.3 | Rūšiavimas, studentų skirstymas į dvi grupes |
+| v0.4 | Atsitiktinis generavimas, keli išvedimo formatai |
+| v1.0 | `std::vector`, `std::list`, `std::deque` palaikymas; 3 skirstymo strategijos; greičio tyrimas |
+
+---
+
 ## Diegimo instrukcija
 
 **Reikalavimai**
-* C++17 palaikantis kompiliatorius (`g++ 9+` arba `clang++ 9+`, `MSVC`)
+* C++17 palaikantis kompiliatorius (`g++ 9+` arba `clang++ 9+`, `MSVC 2019+`)
 * `make` (Unix) arba `cmake 3.16+` (bet kuri OS)
 
 **Su Make (Unix)**
 ```bash
-git clone [https://github.com/jusu-vartotojas/studentu-analize.git](https://github.com/jusu-vartotojas/studentu-analize.git)
+git clone https://github.com/jusu-vartotojas/studentu-analize.git
 cd studentu-analize
 make
 ```
 
 **Su CMake (Unix / Windows)**
 ```bash
-git clone [https://github.com/jusu-vartotojas/studentu-analize.git](https://github.com/jusu-vartotojas/studentu-analize.git)
+git clone https://github.com/jusu-vartotojas/studentu-analize.git
 cd studentu-analize
 mkdir build && cd build
 cmake ..
 cmake --build .
 ```
 
+---
+
 ## Paleidimo instrukcija
 
-**Unix (Make)**: `./studentai`  
-**Unix/Windows (CMake)**: `./build/studentai` (arba `.exe` Windows aplinkoje).
+**Unix (Make):**
+```bash
+./studentai
+```
 
-**Svarbu:** Programa automatiškai naudoja `output/` aplanką rezultatams. Jei jo nėra, susikurkite rankiniu būdu.
+**Unix/Windows (CMake):**
+```bash
+./build/studentai        # Linux / macOS
+.\build\Debug\studentai.exe   # Windows
+```
+
+> **Svarbu:** programa naudoja `output/` aplanką rezultatams. `make` ir CMake jį sukuria automatiškai. Jei paleidžiate rankiniu būdu, sukurkite `output/` rankiniu būdu prieš pirmą paleidimą.
+
+---
 
 ## Programos naudojimas
 
 Paleidus programą, pateikiamas meniu:
-1. Įvesti duomenis ranka.
-2. Skaityti iš `kursiokai.txt`.
-3. Atsitiktinis pažymių generavimas.
-4. Automatinis visų duomenų generavimas.
-5. Baigti darbą.
-6. Sugeneruoti 5 testinius failus (nuo 1k iki 10M įrašų).
-7. Atlikti pilną konteinerių ir strategijų greičio tyrimą.
+
+```
+1 - ranka ivedami duomenys
+2 - is failo ivedami duomenys
+3 - automatiskai sugeneruoti pazymius
+4 - sugeneruoti studentu vardus, pavardes ir pazymius
+5 - baigti darba
+6 - sugeneruoti 5 duomenu failus
+7 - atlikti duomenu apdorojima (vector / list / deque)
+```
+
+Rekomenduojama tvarka pirmam paleidimui:
+1. Pasirinkite **6** — sugeneruoja penkis testinius failus (`output/studentai_1000.txt` … `_10000000.txt`).
+2. Pasirinkite **7** — atlieka pilną greičio tyrimą visoms trims strategijoms ir konteineriams.
 
 ---
 
 ## Konteinerių tyrimas
 
-**Testavimo sistema**
-* **OS:** Windows 10/11 | **CPU:** Intel Core i7 / AMD Ryzen 7 | **RAM:** 16 GB | **Saugykla:** SSD NVMe.
+> **Testavimo sistema**
+> * **CPU:** AMD ryzen 5 5600x 
+> * **RAM:** 16 gb
+> * **Saugykla:** 1tb ssd
+> * **OS:** Windows 11
+> * **Kompiliatorius:** g++
 
-**Nuskaitymo laikas (s) — vidurkis**
+Visi laikai — **3 paleidimų vidurkis** (sekundėmis). Failai generuoti vieną kartą prieš tyrimą ir nekeisti tarp bandymų. *(Pateikti duomenys remiasi 1-osios strategijos nuskaitymo ir rūšiavimo matavimais).*
+
+### Nuskaitymo laikas (s)
 
 | Įrašų sk. | vector | list | deque |
-|---|---|---|---|
-| **1 000** | 0.002 | 0.002 | 0.002 |
-| **10 000** | 0.019 | 0.020 | 0.018 |
-| **100 000** | 0.180 | 0.182 | 0.174 |
-| **1 000 000** | 1.768 | 1.829 | 1.756 |
-| **10 000 000**| 18.123 | 18.380 | 17.773 |
+|-----------|--------|------|-------|
+| 1 000 | 0.003 | 0.002 | 0.002 |
+| 10 000 | 0.020 | 0.022 | 0.021 |
+| 100 000 | 0.209 | 0.235 | 0.227 |
+| 1 000 000 | 2.108 | 2.104 | 2.021 |
+| 10 000 000 | 21.379 | 21.387 | 20.923 |
+
+### Rūšiavimo laikas (s)
+
+| Įrašų sk. | vector | list | deque |
+|-----------|--------|------|-------|
+| 1 000 | 0.001 | 0.000 | 0.001 |
+| 10 000 | 0.008 | 0.003 | 0.012 |
+| 100 000 | 0.111 | 0.042 | 0.174 |
+| 1 000 000 | 1.581 | 0.607 | 2.075 |
+| 10 000 000 | 19.549 | 9.345 | 26.450 |
 
 ---
 
 ## Strategijų tyrimas
 
-**Skirstymo laikas (s) — vidurkis**
+Matuojamas tik skirstymo žingsnis (nuskaitymas ir rūšiavimas neįskaičiuoti).
 
-| Konteineris | Strategija | 100k įrašų | 1M įrašų | 10M įrašų |
-|---|---|---|---|---|
-| **std::vector** | S1 (2 nauji) | 0.022 | 0.204 | 2.445 |
-| | S2 (1 naujas) | 0.018 | 0.183 | 2.196 |
-| | S3 (partition)| 0.025 | 0.246 | 2.952 |
-| **std::list** | S1 (2 nauji) | 0.027 | 0.267 | 2.581 |
-| | S2 (1 naujas) | 0.022 | 0.241 | 2.313 |
-| | S3 (partition)| 0.025 | 0.288 | 2.764 |
-| **std::deque** | S1 (2 nauji) | 0.018 | 0.178 | 1.782 |
-| | S2 (1 naujas) | 0.021 | 0.223 | 2.230 |
-| | S3 (partition)| 0.030 | 0.328 | 3.280 |
+### Skirstymo laikas (s) — 100 000 įrašų
+
+| Strategija | vector | list | deque |
+|------------|--------|------|-------|
+| S1 — du nauji konteineriai | 0.026 | 0.038 | 0.028 |
+| S2 — vienas naujas, trinimas | 0.023 | 0.041 | 0.026 |
+| S3 — `std::partition` + `reserve` | 0.015 | 0.038 | 0.022 |
+
+### Skirstymo laikas (s) — 1 000 000 įrašų
+
+| Strategija | vector | list | deque |
+|------------|--------|------|-------|
+| S1 | 0.301 | 0.380 | 0.253 |
+| S2 | 0.262 | 0.376 | 0.268 |
+| S3 | 0.130 | 0.380 | 0.201 |
+
+### Skirstymo laikas (s) — 10 000 000 įrašų
+
+| Strategija | vector | list | deque |
+|------------|--------|------|-------|
+| S1 | 3.325 | 4.149 | 2.627 |
+| S2 | 2.892 | 4.119 | 3.171 |
+| S3 | 1.239 | 4.161 | 2.172 |
+
+### Strategijų aprašas
+
+**S1 — du nauji konteineriai**
+Bendras `visi` konteineris lieka nepakeistas; sukuriami du nauji: `gerai` ir `blogai`. Kiekvienas studentas egzistuoja dviejuose konteineriuose vienu metu — tai dvigubai daugiau atminties. Paprasta realizacija, bet atminties atžvilgiu neefektyviausia.
+
+**S2 — vienas naujas konteineris + trinimas iš originalo**
+Sukuriamas tik `blogai` konteineris; vargšiukai iškeliami į jį ir **ištrinami** iš `visi`. Po operacijos `visi` lieka tik kietiakai. `std::vector` ir `std::deque` naudoja `std::remove_if` + `erase` idiomą; `std::list` — savo `remove_if` metodą (O(n), be poslinkių). Atminties efektyviau, tačiau `vector`/`deque` trinimas gali sukelti elementų poslinkius.
+
+**S3 — `std::partition` + `reserve`**
+Paremta S2, papildyta dviem optimizacijomis:
+1. `blogai.reserve(visi.size())` vektoriui — iš anksto rezervuoja atmintį, pašalina dinaminius perskirstymus `push_back` metu.
+2. `std::partition` vietoje `std::remove_if` — vienas O(n) praėjimas su `swap` operacijomis, be papildomo buferio ir be elementų tvarkos išsaugojimo kaštų (`std::stable_partition` yra O(n log n) arba O(n) su O(n) papildomu buferiu). Elementai perkeliami į `blogai` per `std::make_move_iterator`, išvengiant kopijavimo.
+`std::list` naudoja tą patį `remove_if` kelią kaip S2 — sąrašui `partition` nenaudinga, nes atsitiktinė prieiga nepalaikoma.
 
 ### Išvados
-* **Efektyviausia strategija:** S2 daugeliu atvejų pasirodė efektyvesnė už S1, nes sumažina atminties kopijavimo poreikį. Tačiau S1 su `std::deque` užfiksavo absoliučiai greičiausią skirstymo laiką (1.78s ties 10M).
-* **Konteinerių palyginimas:** `std::deque` ir `std::vector` ženkliai lenkia `std::list` tiek nuskaitymo, tiek apdorojimo fazėse dėl geresnio CPU spartinančiosios atminties (cache) panaudojimo.
-* **Stable Partition (S3):** Nors ši strategija yra algoritmiškai "švari", šiame specifiniame studentų duomenų kontekste ji nusileido optimizuotam S2 variantui.
+
+Remiantis atlikto tyrimo rezultatais, galime padaryti šias išvadas:
+
+* **Nuskaitymas iš failo yra I/O nulemtas procesas:** Visi trys konteineriai rodo labai panašų nuskaitymo greitį (~21 sek. ties 10M įrašų). Tai rodo, kad didžiausias stabdis čia yra darbas su kietuoju disku ir teksto srautų (`fstream`) apdorojimas, o ne duomenų įterpimas į pačius konteinerius.
+* **`std::list` karaliauja rūšiavime:** Priešingai lūkesčiams apie lėtesnį `list` veikimą, jo `sort()` metodas veikia daugiau nei dvigubai greičiau už `std::vector` ir `std::deque` (9.3 s vs 19.5 s ties 10M). Taip yra todėl, kad rikiuojant elementus sąraše keičiamos tik rodyklės (pointers), o ne kopijuojami patys objektų duomenys atmintyje.
+* **3-ioji strategija (`std::partition`) su `std::vector` yra absoliuti skirstymo lyderė:** Atliekant skirstymą 10M įrašų mastu, `vector` atveju S3 užtruko vos 1.239 s, kai pirmoji strategija užėmė 3.325 s. Tai įrodo, kad algoritmų lygio optimizacija (`std::partition`) bei išankstinis atminties rezervavimas (`reserve`) drastiškai sumažina nereikalingo duomenų kopijavimo kaštus.
+* **Sąrašui (`std::list`) strategijos neturi įtakos skirstymui:** Skirstymo laikai visose trijose strategijose ties 10M įrašų buvo beveik identiški (~4.1 s). Kadangi sąrašas nepalaiko atsitiktinės prieigos (random access), jis negali pilnai išnaudoti `std::partition` algoritmo privalumų, o elementų trynimas / iškėlimas iš jo prigimties ir taip reikalauja vienodo rodyklių perjungimo.

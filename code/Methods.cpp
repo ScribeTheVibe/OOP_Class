@@ -7,13 +7,14 @@ double skaiciuotiMediana(vector<int> &v)
     if (v.empty())
         return 0;
 
-    sort(v.begin(), v.end());
-    int p = v.size();
+    vector<int> tmp(v); // work on a copy — do not mutate the caller's data
+    sort(tmp.begin(), tmp.end());
+    int p = tmp.size();
 
     if (p % 2 == 0)
-        return (v[p / 2 - 1] + v[p / 2]) / 2.0;
+        return (tmp[p / 2 - 1] + tmp[p / 2]) / 2.0;
     else
-        return v[p / 2];
+        return tmp[p / 2];
 }
 
 int saugusInt(string tekstas, int min, int max)
@@ -49,7 +50,7 @@ void generuotiFaila(const string &filename, int studentCount, int gradeCount)
 
     for (int i = 1; i <= studentCount; i++)
     {
-        file << setw(24) << left << ("Vardas"  + std::to_string(i))
+        file << setw(24) << left << ("Vardas" + std::to_string(i))
              << setw(30) << left << ("Pavarde" + std::to_string(i));
         for (int j = 0; j < gradeCount; j++)
             file << setw(10) << left << (rand() % 11);
@@ -62,14 +63,13 @@ void generuotiVisusFailus()
     srand(time(NULL));
     const int gradeCount = 5;
 
-    int    sizes[] = {1000, 10000, 100000, 1000000, 10000000};
+    int sizes[] = {1000, 10000, 100000, 1000000, 10000000};
     string names[] = {
         "output/studentai_1000.txt",
         "output/studentai_10000.txt",
         "output/studentai_100000.txt",
         "output/studentai_1000000.txt",
-        "output/studentai_10000000.txt"
-    };
+        "output/studentai_10000000.txt"};
 
     for (int i = 0; i < 5; i++)
     {
