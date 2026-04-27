@@ -24,64 +24,20 @@ Programa skirta studentų duomenų nuskaitymui, rūšiavimui ir skirstymui į dv
 
 ---
 
-## Diegimo instrukcija
-
-**Reikalavimai**
-* C++17 palaikantis kompiliatorius (`g++ 9+` arba `clang++ 9+`, `MSVC 2019+`)
-* `make` (Unix) arba `cmake 3.16+` (bet kuri OS)
-
-**Su Make (Unix)**
-```bash
-git clone https://github.com/jusu-vartotojas/studentu-analize.git
-cd studentu-analize
-make
-```
-
-**Su CMake (Unix / Windows)**
-```bash
-git clone https://github.com/jusu-vartotojas/studentu-analize.git
-cd studentu-analize
-mkdir build && cd build
-cmake ..
-cmake --build .
-```
-
----
-
-## Paleidimo instrukcija
-
-**Unix (Make):**
-```bash
-./studentai
-```
-
-**Unix/Windows (CMake):**
-```bash
-./build/studentai        # Linux / macOS
-.\build\Debug\studentai.exe   # Windows
-```
-
-> **Svarbu:** programa naudoja `output/` aplanką rezultatams. `make` ir CMake jį sukuria automatiškai. Jei paleidžiate rankiniu būdu, sukurkite `output/` rankiniu būdu prieš pirmą paleidimą.
-
----
-
 ## Programos naudojimas
 
 Paleidus programą, pateikiamas meniu:
 
 ```
-1 - ranka ivedami duomenys
-2 - is failo ivedami duomenys
-3 - automatiskai sugeneruoti pazymius
-4 - sugeneruoti studentu vardus, pavardes ir pazymius
-5 - baigti darba
-6 - sugeneruoti 5 duomenu failus
-7 - atlikti duomenu apdorojima (vector / list / deque)
+Pasirinkite programos eigą:
+1 - ranką,
+2 - generuoti tik pažymius,
+3 - generuoti studentų vardus, pavardės ir pažymius,
+4 - skaityti studentus iš failo,
+5 - testavimas su failais,
+6 - generuoti failą,
+7 - baigti darbą: 7
 ```
-
-Rekomenduojama tvarka pirmam paleidimui:
-1. Pasirinkite **6** — sugeneruoja penkis testinius failus (`output/studentai_1000.txt` … `_10000000.txt`).
-2. Pasirinkite **7** — atlieka pilną greičio tyrimą visoms trims strategijoms ir konteineriams.
 
 ---
 
